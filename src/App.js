@@ -19,6 +19,8 @@ function App() {
 
   const updateFavoriteVideo = favoriteVideo => {
     localStorage.setItem('favoriteVideo', JSON.stringify(favoriteVideo));
+
+    /** 這邊使用 ... 來設定新的記憶體位置，不然不會觸發 render */
     setFavoriteVideo({...favoriteVideo});
   }
 

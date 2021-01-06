@@ -8,6 +8,7 @@ import { VideoItem } from "components";
 /** 樣式 */
 import style from './style.module.scss';
 
+/** 環境變數 */
 const { REACT_APP_KEY: KEY } = process.env;
 
 const MAX = 100;
@@ -52,7 +53,6 @@ export const HomePage = props => {
       <ul>
         <li><Link to="/">首頁</Link></li>
         <li><Link to="/favorite">收藏頁</Link></li>
-        <li><Link to="/play">播放頁</Link></li>
       </ul>
       <h1>首頁</h1>
       <ul className={style.pagination}>
