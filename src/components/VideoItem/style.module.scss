@@ -18,11 +18,20 @@
   .img {
     height: 100px;
     border-radius: 3px;
+    position: relative;
     background-size: cover;
     background-position: center;
-  }
-  .duration {
-    font-size: 12px;
+    &:before {
+      right: 0;
+      bottom: 0;
+      padding: 5px 10px;
+      color: #fff;
+      display: block;
+      font-size: 12px;
+      position: absolute;
+      background-color: #000;
+      content: attr(data-duration);
+    }
   }
   .title {
     font-weight: bold;
@@ -38,5 +47,17 @@
     max-height: 50px;
     overflow: hidden; 
     text-overflow: ellipsis;
+  }
+
+  .favorited {
+    color: #fff;
+    padding: 5px 10px;
+    background-color: #ff0100;
+  }
+
+  .btn {
+    padding: 5px 10px;
+    border: 1px solid #666;
+    background-color: #fff;
   }
 }

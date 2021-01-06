@@ -118,6 +118,7 @@ export const HomePage = props => {
           isFavorited={props.favoriteVideo.hasOwnProperty(video.id)}
         />
       )}
+      {videoList.length > 1 && <Pagination {...{page, lastPage}} />}
     </div>
   )
 }
