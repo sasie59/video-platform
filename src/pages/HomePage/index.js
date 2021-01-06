@@ -13,7 +13,7 @@ const { REACT_APP_KEY: KEY } = process.env;
 
 const MAX = 100;
 const PAGESIZE = 12;
-const LASTPAGE = Math.ceil(MAX / PAGESIZE);
+let lastPage = Math.ceil(MAX / PAGESIZE);
 const SEARCH_URL = `https://www.googleapis.com/youtube/v3/search?key=${KEY}&maxResults=50&part=snippet&q=`;
 const POPULAR_URL = `https://www.googleapis.com/youtube/v3/videos?key=${KEY}&maxResults=50&part=snippet,contentDetails,statistics`
 
@@ -25,10 +25,11 @@ const fetchVideo = (URL, cb, nextPageToken = '') => {
     .then(res => res.json())
     .then(({ items, nextPageToken }) => {
       _videoList = [..._videoList, ...items];
-      if(_videoList.length < MAX)
+      if(_videoList.length < MAX && nextPageToken)
         fetchVideo(URL, cb, `&pageToken=${nextPageToken}`);
-      else
+      else {
         cb(_videoList);
+      }
     });
 }
 
@@ -47,24 +48,32 @@ export const HomePage = props => {
     props.updateFavoriteVideo(favoriteVideo);
   }
 
+  const updateVideoList = videoList => {
+    lastPage = Math.ceil(Math.min(MAX, _videoList.length) / PAGESIZE);
+    setVideoList(videoList);
+  }
+
   /** 加分題：搜尋, 但輸入空白不搜尋 */
   const handleSerach = e => {
     e.preventDefault();
     const searchText = inputDOM.current.value.trim();
     if(!searchText) return;
 
+    setVideoList([]);
+
     _videoList = [];
     fetchVideo(`${SEARCH_URL}${searchText}`, data => {
       /** 因為使用 search 與 video api 拿到的資料結構不同，所以需要在資料搜集完畢時調整一次 id 的規格 */
       const idList = data.map(({ id: { videoId}}) => videoId ).slice(0, 50).join(',');
-      fetchVideo(`${POPULAR_URL}&id=${idList}`, setVideoList);
+      _videoList = [];
+      fetchVideo(`${POPULAR_URL}&id=${idList}`, updateVideoList);
     });
   }
 
   /** 一進到首頁就取得熱門影片 */
   useEffect(() => {
     _videoList = [];
-    fetchVideo(`${POPULAR_URL}&chart=mostPopular`, setVideoList);
+    fetchVideo(`${POPULAR_URL}&chart=mostPopular`, updateVideoList);
   }, []);
 
   return (
@@ -75,11 +84,11 @@ export const HomePage = props => {
       </ul>
       <h1>首頁</h1>
       <form onSubmit={handleSerach}>
-        <input type="text" ref={inputDOM} required />
+        <input type="text" ref={inputDOM} required disabled={videoList.length === 0} />
       </form>
       <ul className={style.pagination}>
         <li>{page > 1 && <Link to={`/?page=${page - 1}`}>上一頁</Link>}</li>
-        {[...Array(LASTPAGE).keys()].map(i =>
+        {[...Array(lastPage).keys()].map(i =>
           <li key={i}><Link to={`/?page=${i + 1}`}>{i + 1}</Link></li>
         )}
         <li>{page < (MAX / PAGESIZE) && <Link to={`/?page=${page + 1}`}>下一頁</Link>}</li>
