@@ -16,11 +16,7 @@ export function VideoItem({onClick, isFavorited, ...props}) {
     id,
     snippet: {
       title, 
-      thumbnails: {
-        standard: {
-          url: image
-        }
-      },
+      thumbnails,
       description,
     },
     contentDetails: {
@@ -35,7 +31,7 @@ export function VideoItem({onClick, isFavorited, ...props}) {
           className={style.img}
           data-duration={timeFormat(duration)}
           style={{
-            backgroundImage: `url(${image})`
+            backgroundImage: `url(${thumbnails.standard?.url || thumbnails.default.url})`
           }}
         />
         <div className={style.title}>{title}</div>

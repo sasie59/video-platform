@@ -104,7 +104,7 @@ export const HomePage = props => {
           disabled={videoList.length === 0}
         />
       </form>
-      {videoList.length > 1 && <Pagination {...{page, lastPage}} />}
+      {videoList.length > 1 && <Pagination {...{page, lastPage, searchText}} />}
       {!videoList.length &&
         <div className={style.loading}>
           Loading
@@ -118,7 +118,7 @@ export const HomePage = props => {
           isFavorited={props.favoriteVideo.hasOwnProperty(video.id)}
         />
       )}
-      {videoList.length > 1 && <Pagination {...{page, lastPage}} />}
+      {videoList.length > 1 && <Pagination {...{page, lastPage, searchText}} />}
     </div>
   )
 }
