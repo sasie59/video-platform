@@ -4,7 +4,6 @@ import { useLocation, useHistory } from "react-router-dom";
 
 /** 自訂元件 */
 import {
-  NavHeader,
   VideoItem,
   Pagination,
 } from "components";
@@ -95,8 +94,7 @@ export const HomePage = props => {
 
   return (
     <div className={style.HomePage}>
-      <NavHeader />
-      <h1>首頁</h1>
+      <div className={style.title}>首頁</div>
       <form onSubmit={handleSerach}>
         <input
           required

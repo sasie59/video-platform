@@ -3,14 +3,17 @@
   padding: 0;
   list-style: none;
   text-align: center;
-  background-color: #eee;
+  background-color: #ff0100;
   li {
     padding: 10px;
     display: inline-block;
     a {
-      color: #666;
+      color: #fff;
       font-weight: bold;
       text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

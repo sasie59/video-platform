@@ -5,13 +5,30 @@ import { Link } from "react-router-dom";
 import style from './style.module.scss';
 
 export function VideoItem({onClick, isFavorited, ...props}) {
+  const {
+    id,
+    snippet: {
+      title, 
+      thumbnails: {
+        maxres: {
+          url: image
+        }
+      },
+      description,
+    },
+    contentDetails: {
+      duration
+    },
+  } = props;
   return (
     <div className={style.VideoItem}>
-      <Link to={`/play?id=${props.id}`}>
-        <img src={props.snippet.thumbnails.default.url} alt={props.snippet.title} />
-        <div className={style.title}>{props.snippet.title}</div>
-        <div className={style.description}>{props.snippet.description}</div>
-        <div className={style.duration}>{props.contentDetails.duration}</div>
+      <Link to={`/play?id=${id}`}>
+        <div className={style.img} style={{
+          backgroundImage: `url(${image})`
+        }} alt={title} />
+        <div className={style.title}>{title}</div>
+        <div className={style.description}>{description}</div>
+        <div className={style.duration}>{duration}</div>
       </Link>
       {isFavorited ?
         <span>已收藏</span>:

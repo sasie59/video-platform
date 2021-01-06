@@ -1,5 +1,8 @@
 /** 自訂元件 */
-import { VideoItem, NavHeader } from "components";
+import { VideoItem } from "components";
+
+/** 樣式 */
+import style from './style.module.scss';
 
 export const FavoritePage = props => {
 
@@ -11,9 +14,8 @@ export const FavoritePage = props => {
   }
 
   return (
-    <div>
-      <NavHeader />
-      <h1>收藏頁</h1>
+    <div className={style.FavoritePage}>
+      <div className={style.title}>收藏頁</div>
       {Object.keys(favoriteVideo).map(videoID =>
         <VideoItem
           isFavorited

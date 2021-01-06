@@ -7,11 +7,15 @@ import {
 } from "react-router-dom";
 import style from './App.module.scss';
 
+/** 頁面 */
 import {
   HomePage,
   PlayPage,
   FavoritePage,
 } from "pages";
+
+/** 自訂元件 */
+import { NavHeader } from "components";
 
 function App() {
 
@@ -26,6 +30,7 @@ function App() {
 
   return (
     <Router>
+      <NavHeader />
       <div className={style.App}>
         <Switch>
           <Route exact path="/play"><PlayPage /></Route>
