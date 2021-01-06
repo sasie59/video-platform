@@ -1,9 +1,10 @@
 /** 套件 */
 import { useEffect, useState, useRef } from 'react';
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 
 /** 自訂元件 */
 import {
+  NavHeader,
   VideoItem,
   Pagination,
 } from "components";
@@ -39,10 +40,12 @@ const fetchVideo = (URL, cb, nextPageToken = '') => {
 export const HomePage = props => {
 
   const inputDOM = useRef();
+  const history = useHistory();
   const location = useLocation();
   const [ videoList, setVideoList ] = useState([]);
 
   const urlParams = new URLSearchParams(location.search);
+  const searchText = urlParams.get('searchText');
   const page = Number(urlParams.get('page') ?? 1);
 
   const addFavorite = video => {
@@ -56,15 +59,13 @@ export const HomePage = props => {
     setVideoList(videoList);
   }
 
-  /** 加分題：搜尋, 但輸入空白不搜尋 */
-  const handleSerach = e => {
-    e.preventDefault();
-    const searchText = inputDOM.current.value.trim();
-    if(!searchText) return;
 
+  const searchFetch = searchText => {
     setVideoList([]);
-
     _videoList = [];
+
+    history.push(`/?searchText=${searchText}`);
+    
     fetchVideo(`${SEARCH_URL}${searchText}`, data => {
       /** 因為使用 search 與 video api 拿到的資料結構不同，所以需要在資料搜集完畢時調整一次 id 的規格 */
       const idList = data.map(({ id: { videoId}}) => videoId ).slice(0, 50).join(',');
@@ -73,23 +74,39 @@ export const HomePage = props => {
     });
   }
 
+  /** 加分題：搜尋, 但輸入空白不搜尋 */
+  const handleSerach = e => {
+    e.preventDefault();
+    const searchText = inputDOM.current.value.trim();
+    if(!searchText) return;
+
+    searchFetch(searchText);
+  }
+
   /** 一進到首頁就取得熱門影片 */
   useEffect(() => {
     _videoList = [];
-    fetchVideo(`${POPULAR_URL}&chart=mostPopular`, updateVideoList);
-  }, []);
+    if(!searchText)
+      fetchVideo(`${POPULAR_URL}&chart=mostPopular`, updateVideoList);
+    else
+      searchFetch(searchText);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchText]);
 
   return (
     <div className={style.HomePage}>
-      <ul>
-        <li><Link to="/">首頁</Link></li>
-        <li><Link to="/favorite">收藏頁</Link></li>
-      </ul>
+      <NavHeader />
       <h1>首頁</h1>
       <form onSubmit={handleSerach}>
-        <input type="text" ref={inputDOM} required disabled={videoList.length === 0} />
+        <input
+          required
+          type="text"
+          ref={inputDOM}
+          placeholder="搜尋..."
+          disabled={videoList.length === 0}
+        />
       </form>
-      <Pagination {...{page, lastPage}} />
+      {videoList.length > 1 && <Pagination {...{page, lastPage}} />}
       {!videoList.length &&
         <div className={style.loading}>
           Loading
@@ -100,7 +117,7 @@ export const HomePage = props => {
           key={video.id}
           {...video}
           onClick={addFavorite}
-          buttonText="收藏"
+          isFavorited={props.favoriteVideo.hasOwnProperty(video.id)}
         />
       )}
     </div>

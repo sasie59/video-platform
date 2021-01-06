@@ -1,8 +1,5 @@
-/** 套件 */
-import { Link } from "react-router-dom";
-
 /** 自訂元件 */
-import { VideoItem } from "components";
+import { VideoItem, NavHeader } from "components";
 
 export const FavoritePage = props => {
 
@@ -15,17 +12,14 @@ export const FavoritePage = props => {
 
   return (
     <div>
-      <ul>
-        <li><Link to="/">首頁</Link></li>
-        <li><Link to="/favorite">收藏頁</Link></li>
-      </ul>
+      <NavHeader />
       <h1>收藏頁</h1>
       {Object.keys(favoriteVideo).map(videoID =>
         <VideoItem
+          isFavorited
           key={videoID}
           {...favoriteVideo[videoID]}
           onClick={removeFavorite}
-          buttonText="取消收藏"
         />
       )}
     </div>

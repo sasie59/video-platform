@@ -1,0 +1,16 @@
+.NavHeader {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+  background-color: #eee;
+  li {
+    padding: 10px;
+    display: inline-block;
+    a {
+      color: #666;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  }
+}
