@@ -101,6 +101,8 @@ export const HomePage = props => {
           type="text"
           ref={inputDOM}
           placeholder="搜尋..."
+          defaultValue={searchText}
+          className={style.searchInput}
           disabled={videoList.length === 0}
         />
       </form>

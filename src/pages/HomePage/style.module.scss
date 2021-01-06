@@ -6,6 +6,15 @@
     font-weight: bold;
     text-align: center;
   }
+  .searchInput {
+    padding: 10px;
+    outline: none;
+    margin: 0 auto;
+    display: block;
+    width: calc(100% - 50px);
+    border: 1px solid #999;
+    -webkit-appearance: none;
+  }
   .loading {
     font-size: 2rem;
   }
