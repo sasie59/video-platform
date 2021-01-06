@@ -10,7 +10,7 @@ export function VideoItem({onClick, isFavorited, ...props}) {
     snippet: {
       title, 
       thumbnails: {
-        maxres: {
+        standard: {
           url: image
         }
       },
