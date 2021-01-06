@@ -1,6 +1,6 @@
 /** 套件 */
 import { useState, useLayoutEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ReactPlayer from 'react-player'
 
 /** 樣式 */
@@ -17,20 +17,12 @@ export const PlayPage = () => {
   const location = useLocation();
   const videoID = new URLSearchParams(location.search).get('id');
   
-  const [ videoInfo, setVideoInfo ] = useState({});
   const [ playing, setPlaying ] = useState(true);
-  const [ enableAD, setEnableAD ] = useState(false);
+  const [ videoInfo, setVideoInfo ] = useState({});
 
-  /** 回復播放並關閉廣告 */
-  const handleResume = () => {
-    setPlaying(true);
-    setEnableAD(false);
-  }
-
-  /** 暫停播放並打開廣告 */
-  const handlePause = () => {
-    setPlaying(false);
-    setEnableAD(true);
+  /** 播放或暫停 */
+  const handlePlayOrPause = () => {
+    setPlaying(!playing);
   }
 
   /** 影片 前進 / 後退 */
@@ -50,30 +42,29 @@ export const PlayPage = () => {
 
   return (
     <div className={style.PlayPage}>
-      <ul>
-        <li><Link to="/">首頁</Link></li>
-        <li><Link to="/favorite">收藏頁</Link></li>
-      </ul>
-      <h1>{videoInfo.title}</h1>
       <div className={style.Player}>
         <ReactPlayer
-          controls
+          width="100%"
           playsinline
           ref={player}
           playing={playing}
-          onPause={handlePause}
           url='https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8'
         />
-        {enableAD &&
+        {!playing &&
           <div className={style.AD}>
-            <h3>AD</h3>
-            <button onClick={handleResume}>close AD</button>
+            <div className={style.modal}>
+              <button onClick={handlePlayOrPause}>關閉廣告</button>
+            </div>
           </div>
         }
       </div>
-      <button onClick={handleSeek.bind(this, 15)}>forward 15sec</button>
-      <button onClick={handleSeek.bind(this, -15)}>back 15sec</button>
-      <div>{videoInfo.description}</div>
+      <div className={style.buttons}>
+        <button onClick={handlePlayOrPause}>播放/暫停</button>
+        <button onClick={handleSeek.bind(this, 15)}>快進15秒</button>
+        <button onClick={handleSeek.bind(this, -15)}>倒進15秒</button>
+      </div>
+      <h1 className={style.title}>{videoInfo.title}</h1>
+      <pre className={style.description}>{videoInfo.description}</pre>
     </div>
   )
 }
