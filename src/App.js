@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Route,
   Switch,
@@ -12,13 +14,25 @@ import {
 } from "pages";
 
 function App() {
+
+  const [favoriteVideo, setFavoriteVideo] = useState(JSON.parse(localStorage.getItem('favoriteVideo')) ?? {});
+
+  const updateFavoriteVideo = favoriteVideo => {
+    localStorage.setItem('favoriteVideo', JSON.stringify(favoriteVideo));
+    setFavoriteVideo({...favoriteVideo});
+  }
+
   return (
     <Router>
       <div className={style.App}>
         <Switch>
-          <Route exact path="/favorite"><FavoritePage /></Route>
           <Route exact path="/play"><PlayPage /></Route>
-          <Route exact path="/"><HomePage /></Route>
+          <Route exact path="/favorite">
+            <FavoritePage {...{ favoriteVideo, updateFavoriteVideo }} />
+          </Route>
+          <Route exact path="/">
+            <HomePage {...{ favoriteVideo, updateFavoriteVideo }} />
+          </Route>
         </Switch>
       </div>
     </Router>

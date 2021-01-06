@@ -1,7 +1,11 @@
+/** 套件 */
 import { useEffect, useState } from 'react';
-
 import { Link, useLocation } from "react-router-dom";
 
+/** 自訂元件 */
+import { VideoItem } from "components";
+
+/** 樣式 */
 import style from './style.module.scss';
 
 const { REACT_APP_KEY: KEY } = process.env;
@@ -10,8 +14,6 @@ const MAX = 100;
 const PAGESIZE = 12;
 const LASTPAGE = Math.ceil(MAX / PAGESIZE);
 const POPULAR_URL = `https://www.googleapis.com/youtube/v3/videos?key=${KEY}&chart=mostPopular&maxResults=50&part=snippet,contentDetails,statistics`
-
-const favoriteVideo = JSON.parse(localStorage.getItem('favoriteVideo')) ?? {};
 
 let videoList = [];
 
@@ -27,18 +29,19 @@ const fetchVideo = (cb, nextPageToken = '') => {
     });
 }
 
-const addFavorite = video => {
-  favoriteVideo[video.id] = video;
-  localStorage.setItem('favoriteVideo', JSON.stringify(favoriteVideo));
-}
-
-export const HomePage = () => {
+export const HomePage = props => {
 
   const location = useLocation();
   const [ videoList, setVideoList ] = useState([]);
 
   const urlParams = new URLSearchParams(location.search);
   const page = Number(urlParams.get('page') ?? 1);
+
+  const addFavorite = video => {
+    const { favoriteVideo } = props;
+    favoriteVideo[video.id] = video;
+    props.updateFavoriteVideo(favoriteVideo);
+  }
 
   useEffect(() => {
     fetchVideo(setVideoList);
@@ -66,15 +69,12 @@ export const HomePage = () => {
         </div>
       }
       {videoList.slice((page - 1) * PAGESIZE, page * PAGESIZE).map(video =>
-          <div className={style.VideoItem} key={video.id}>
-            <Link to={`/play?v=${video.id}`}>
-              <img src={video.snippet.thumbnails.default.url} alt={video.snippet.title} />
-              <div className={style.title}>{video.snippet.title}</div>
-              <div className={style.description}>{video.snippet.description}</div>
-              <div className={style.duration}>{video.contentDetails.duration}</div>
-            </Link>
-            <button onClick={addFavorite.bind(this, video)}>收藏</button>
-          </div>
+        <VideoItem
+          key={video.id}
+          {...video}
+          onClick={addFavorite}
+          buttonText="收藏"
+        />
       )}
     </div>
   )
