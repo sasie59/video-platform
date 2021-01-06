@@ -35,6 +35,12 @@ jobs:
     # - name: Run the tests and generate coverage report
     #   run: npm test -- --coverage
 
+    - name:  Copy the YT Key
+      env:
+          yt_key: ${{ secrets.YT_KEY }}
+      run: |
+        echo "REACT_APP_KEY=$yt_key" > .env
+
     - name: Build
       run: npm run build
       
