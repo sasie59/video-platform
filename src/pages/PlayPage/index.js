@@ -1,5 +1,5 @@
 /** 套件 */
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ReactPlayer from 'react-player'
 
@@ -12,23 +12,34 @@ const { REACT_APP_KEY: KEY } = process.env;
 const VIDEO_URL = `https://www.googleapis.com/youtube/v3/videos?key=${KEY}&part=snippet,contentDetails,statistics&id=`;
 
 export const PlayPage = () => {
+
+  const player = useRef();
   const location = useLocation();
-  const urlParams = new URLSearchParams(location.search);
-  const videoID = urlParams.get('id');
+  const videoID = new URLSearchParams(location.search).get('id');
+  
   const [ videoInfo, setVideoInfo ] = useState({});
   const [ playing, setPlaying ] = useState(true);
   const [ enableAD, setEnableAD ] = useState(false);
 
+  /** 回復播放並關閉廣告 */
   const handleResume = () => {
     setPlaying(true);
     setEnableAD(false);
   }
 
+  /** 暫停播放並打開廣告 */
   const handlePause = () => {
     setPlaying(false);
     setEnableAD(true);
   }
 
+  /** 影片 前進 / 後退 */
+  const handleSeek = sec => {
+    const currentTime = player.current.getCurrentTime();
+    player.current.seekTo(currentTime + sec, 'seconds');
+  }
+
+  /** 只抓必要的資訊進來就好 */
   useLayoutEffect(() => {
     fetch(`${VIDEO_URL}${videoID}`)
       .then(res => res.json())
@@ -48,6 +59,7 @@ export const PlayPage = () => {
         <ReactPlayer
           controls
           playsinline
+          ref={player}
           playing={playing}
           onPause={handlePause}
           url='https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8'
@@ -59,7 +71,11 @@ export const PlayPage = () => {
           </div>
         }
       </div>
+      <button onClick={handleSeek.bind(this, 15)}>forward 15sec</button>
+      <button onClick={handleSeek.bind(this, -15)}>back 15sec</button>
       <div>{videoInfo.description}</div>
     </div>
   )
 }
+
+/** refs: https://github.com/cookpete/react-player/issues/724#issuecomment-541413917 */
