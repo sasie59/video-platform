@@ -3,7 +3,10 @@ import { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from "react-router-dom";
 
 /** 自訂元件 */
-import { VideoItem } from "components";
+import {
+  VideoItem,
+  Pagination,
+} from "components";
 
 /** 樣式 */
 import style from './style.module.scss';
@@ -86,14 +89,7 @@ export const HomePage = props => {
       <form onSubmit={handleSerach}>
         <input type="text" ref={inputDOM} required disabled={videoList.length === 0} />
       </form>
-      <ul className={style.pagination}>
-        <li>{page > 1 && <Link to={`/?page=${page - 1}`}>上一頁</Link>}</li>
-        {[...Array(lastPage).keys()].map(i =>
-          <li key={i}><Link to={`/?page=${i + 1}`}>{i + 1}</Link></li>
-        )}
-        <li>{page < (MAX / PAGESIZE) && <Link to={`/?page=${page + 1}`}>下一頁</Link>}</li>
-      </ul>
-      <hr/>
+      <Pagination {...{page, lastPage}} />
       {!videoList.length &&
         <div className={style.loading}>
           Loading
